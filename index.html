@@ -11,44 +11,20 @@
       --secondary: #2575fc;
       --accent: #ff6b6b;
       --glass-bg: rgba(255,255,255,0.10);
-
-      --background: linear-gradient(120deg, var(--primary), var(--secondary));
-      --text: #fff;
-      --card-bg: var(--glass-bg);
-      --input-bg: rgba(255,255,255,0.92);
-      --input-text: #333;
-      --option-bg: rgba(255,255,255,0.2);
-      --option-selected: rgba(255,255,255,0.45);
-      --border: rgba(255,255,255,0.22);
-      --shadow: 0 5px 25px 0 rgba(31,38,135,0.14);
-      --card-shadow: 0 5px 26px 0 rgba(31,38,135,0.10);
-      --footer-opacity: 0.7;
-      --nav-a: #fff;
-      --nav-a-hover: var(--accent);
-      --link: #fff;
+      --background-dark: linear-gradient(135deg, #191c22 0%, #23272f 100%);
+      --text-dark: #fff;
+      --option-bg-dark: rgba(60,65,80,0.18);
+      --option-selected-dark: rgba(110,110,130,0.32);
+      --border-dark: rgba(100,100,120,0.28);
+      --input-bg-dark: #242733;
+      --input-text-dark: #f7f8fa;
+      --card-bg-dark: rgba(36,38,45,0.98);
+      --shadow-dark: 0 5px 25px 0 rgba(30,35,45,0.22);
     }
-    .light-mode {
-      --background: linear-gradient(120deg, #f8fafc 40%, #e2e6ef 100%);
-      --text: #191c22;
-      --card-bg: rgba(250,250,253,0.86);
-      --input-bg: #fff;
-      --input-text: #222;
-      --option-bg: rgba(220,222,235,0.18);
-      --option-selected: rgba(180,180,220,0.38);
-      --border: rgba(160,160,180,0.17);
-      --shadow: 0 2px 16px 0 rgba(120,140,180,0.10);
-      --card-shadow: 0 2px 16px 0 rgba(120,140,180,0.08);
-      --footer-opacity: 0.92;
-      --nav-a: #222;
-      --nav-a-hover: var(--primary);
-      --link: var(--primary);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', 'Montserrat', Arial, sans-serif;
-      background: var(--background);
-      color: var(--text);
+      background: var(--background-dark);
+      color: var(--text-dark);
       min-height: 100vh;
       line-height: 1.6;
       transition: background 0.4s, color 0.32s;
@@ -70,13 +46,12 @@
       text-shadow: 0 2px 10px rgba(0,0,0,0.10);
       margin-bottom: 8px;
     }
-
     .theme-toggle {
       position: absolute;
       top: 22px;
       right: 22px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+      background: var(--card-bg-dark);
+      border: 1px solid var(--border-dark);
       border-radius: 50%;
       width: 44px;
       height: 44px;
@@ -85,22 +60,16 @@
       justify-content: center;
       cursor: pointer;
       font-size: 1.32rem;
-      color: var(--text);
-      box-shadow: 0 2px 12px 0 rgba(30,30,50,0.08);
+      color: var(--text-dark);
+      box-shadow: var(--shadow-dark);
       transition: background .22s, color .22s, border .22s;
       z-index: 20;
     }
-    .theme-toggle:hover {
-      background: var(--option-selected);
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
     nav {
       margin-top: 10px;
     }
     nav a {
-      color: var(--nav-a);
+      color: #fff;
       text-decoration: none;
       margin: 0 13px;
       font-weight: 600;
@@ -108,7 +77,7 @@
       transition: color .2s;
     }
     nav a:hover {
-      color: var(--nav-a-hover);
+      color: var(--accent);
     }
     .main-hero {
       display: flex;
@@ -132,11 +101,10 @@
     .main-desc {
       font-size: 1.13rem;
       margin-bottom: 26px;
-      color: var(--text);
+      color: var(--text-dark);
       opacity: 0.94;
       max-width: 520px;
     }
-
     .options-panel {
       display: flex;
       justify-content: center;
@@ -145,10 +113,10 @@
       margin-bottom: 20px;
     }
     .option-card {
-      background: var(--option-bg);
+      background: var(--option-bg-dark);
       border-radius: 18px;
-      box-shadow: var(--shadow);
-      border: 1.2px solid var(--border);
+      box-shadow: var(--shadow-dark);
+      border: 1.2px solid var(--border-dark);
       min-width: 230px;
       max-width: 280px;
       padding: 34px 20px 32px 20px;
@@ -156,13 +124,14 @@
       cursor: pointer;
       transition: transform .18s, box-shadow .18s, background .22s, border .18s;
       position: relative;
+      color: var(--text-dark);
     }
     .option-card.selected,
     .option-card:hover {
       transform: translateY(-6px) scale(1.04);
       box-shadow: 0 14px 36px 0 rgba(31,38,135,0.22);
       border-color: var(--accent);
-      background: var(--option-selected);
+      background: var(--option-selected-dark);
     }
     .option-icon {
       font-size: 2.8rem;
@@ -177,17 +146,17 @@
     }
     .option-desc {
       font-size: 0.99rem;
-      color: var(--text);
+      color: var(--text-dark);
       opacity: 0.80;
       min-height: 36px;
     }
     .section-module {
       max-width: 650px;
       margin: 34px auto 0 auto;
-      background: var(--card-bg);
+      background: var(--card-bg-dark);
       border-radius: 22px;
-      box-shadow: var(--card-shadow);
-      border: 1.2px solid var(--border);
+      box-shadow: var(--shadow-dark);
+      border: 1.2px solid var(--border-dark);
       padding: 32px 20px 30px 20px;
       display: none;
       animation: fadeIn .6s;
@@ -197,8 +166,6 @@
       from { opacity: 0; transform: translateY(30px);}
       to { opacity: 1; transform: translateY(0);}
     }
-
-    /* --------- TTS Module Styles --------- */
     .input-group { margin-bottom: 25px; }
     label {
       display: block;
@@ -213,9 +180,9 @@
       border-radius: 10px;
       border: none;
       font-size: 1rem;
-      background: var(--input-bg);
+      background: var(--input-bg-dark);
       resize: vertical;
-      color: var(--input-text);
+      color: var(--input-text-dark);
     }
     .voice-options {
       display: flex;
@@ -226,31 +193,66 @@
     .voice-option {
       flex: 1;
       min-width: 100px;
-      background: var(--option-bg);
+      background: var(--option-bg-dark);
       padding: 13px;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid transparent;
       text-align: left;
+      color: var(--text-dark);
     }
     .voice-option:hover {
-      background: var(--option-selected);
+      background: var(--option-selected-dark);
     }
     .voice-option.selected {
-      background: var(--option-selected);
+      background: var(--option-selected-dark);
       border-color: var(--accent);
     }
     .voice-name {
       font-weight: 600;
       margin-bottom: 4px;
-      color: var(--text);
+      color: var(--text-dark);
     }
     .voice-desc {
       font-size: 0.88rem;
       opacity: 0.84;
-      color: var(--text);
+      color: var(--text-dark);
     }
+
+    /* Customization controls */
+    .custom-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 18px;
+      margin-top: 10px;
+      justify-content: flex-start;
+    }
+    .custom-control {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 1rem;
+      color: var(--text-dark);
+      background: rgba(80,80,90,0.10);
+      border-radius: 8px;
+      padding: 7px 16px 7px 10px;
+    }
+    .custom-control label {
+      margin: 0 0 0 2px;
+      font-size: 1rem;
+      font-weight: 400;
+      color: inherit;
+      display: inline;
+    }
+    .custom-control input[type="range"] {
+      width: 80px;
+      margin-left: 7px;
+      margin-right: 7px;
+    }
+
     button {
       background: white;
       color: var(--secondary);
@@ -275,38 +277,95 @@
       transform: none;
       box-shadow: none;
     }
-    .api-key-container {
-      margin-top: 10px;
-      background: rgba(0,0,0,0.10);
-      padding: 13px;
-      border-radius: 9px;
+    /* --------- API KEY MODAL --------- */
+    .api-key-trigger {
+      display: inline-block;
+      margin: 18px auto 0 auto;
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 1.08rem;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: color 0.22s;
     }
-    #api-key-group { position: relative; }
-    #api-key {
+    .api-key-trigger:hover { color: #ff3b3b; }
+    .api-key-modal-bg {
+      display: none;
+      position: fixed;
+      top:0; left:0; width:100vw; height:100vh;
+      background: rgba(15,18,30,0.88);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .api-key-modal-bg.active { display: flex; }
+    .api-key-modal {
+      background: var(--card-bg-dark);
+      border-radius: 15px;
+      padding: 30px 22px 22px 22px;
+      max-width: 340px;
+      width: 94vw;
+      box-shadow: 0 5px 38px 0 rgba(20,20,30,0.16);
+      position: relative;
+      text-align: left;
+      color: var(--text-dark);
+      border: 1.2px solid var(--border-dark);
+      animation: fadeIn .3s;
+    }
+    .api-key-modal h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .api-key-modal label {
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+    .api-key-modal input[type="password"],
+    .api-key-modal input[type="text"] {
       width: 100%;
       padding: 9px 38px 9px 12px;
       border-radius: 7px;
       border: none;
-      margin-top: 7px;
-      background: var(--input-bg);
-      color: var(--input-text);
+      background: var(--input-bg-dark);
+      color: var(--input-text-dark);
       font-size: 1rem;
       letter-spacing: 0.08em;
+      margin-bottom: 12px;
     }
-    .show-hide-btn {
+    .api-key-modal .show-hide-btn {
       position: absolute;
-      right: 6px;
-      top: 50%;
-      transform: translateY(-10px);
+      right: 25px;
+      top: 86px;
       background: none;
       border: none;
-      color: var(--input-text);
+      color: var(--input-text-dark);
       font-size: 1.2em;
       cursor: pointer;
       z-index: 2;
-      padding: 2px 7px;
+      padding: 0 7px;
     }
-    .show-hide-btn:focus { outline: 2px solid var(--secondary); }
+    .api-key-modal .close-modal {
+      position: absolute;
+      top: 10px; right: 15px;
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 1.6rem;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 10;
+      transition: color .2s;
+    }
+    .api-key-modal .close-modal:hover { color: #ff3b3b; }
+    .api-key-modal small {
+      font-size: 0.82rem;
+      opacity: 0.7;
+    }
+    .api-key-modal a { color: var(--accent); text-decoration: underline; }
     #audio-container {
       margin-top: 20px;
       text-align: center;
@@ -358,21 +417,21 @@
     }
     .coming-soon {
       font-size: 1.15rem;
-      color: var(--text);
+      color: var(--text-dark);
       opacity: 0.94;
       text-align: center;
       padding: 28px 0 24px 0;
     }
-    a { color: var(--link); }
     footer {
       text-align: center;
       margin-top: 60px;
-      opacity: var(--footer-opacity);
+      opacity: 0.7;
       font-size: 0.98rem;
       padding-bottom: 28px;
     }
     @media (max-width: 900px) {
       .options-panel { flex-direction: column; align-items: center; }
+      .custom-controls { flex-direction: column; align-items: stretch; gap: 10px; }
     }
     @media (max-width: 600px) {
       .main-title { font-size: 1.37rem;}
@@ -446,19 +505,20 @@
           </div>
         </div>
       </div>
-      <div class="api-key-container">
-        <label for="api-key">Chave API ElevenLabs:</label>
-        <div id="api-key-group" style="position:relative;">
-          <input type="password" id="api-key" placeholder="Cole sua chave API aqui" autocomplete="off">
-          <button class="show-hide-btn" id="toggle-api-key" title="Mostrar/ocultar chave" tabindex="0">
-            <span id="eye-icon">&#128065;</span>
-          </button>
+      <!-- Customização de voz -->
+      <div class="custom-controls">
+        <div class="custom-control">
+          <input type="checkbox" id="reverb">
+          <label for="reverb">Reverb</label>
         </div>
-        <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;">
-          Obtenha sua chave gratuita em <a href="https://elevenlabs.io/" target="_blank" style="color: var(--link); text-decoration: underline;">elevenlabs.io</a>
-        </p>
+        <div class="custom-control">
+          <label for="speed">Velocidade:</label>
+          <input type="range" min="0.7" max="1.5" step="0.05" value="1" id="speed" />
+          <span id="speed-value">1.00x</span>
+        </div>
       </div>
       <button id="generate-btn">Gerar Áudio</button>
+      <button class="api-key-trigger" id="open-apikey-btn">Mostrar chave API</button>
       <div id="loading" class="hidden">
         <div class="loader"></div>
         <p>Processando seu áudio...</p>
@@ -472,6 +532,22 @@
         </div>
       </div>
     </section>
+
+    <!-- Modal da chave API -->
+    <div class="api-key-modal-bg" id="apikey-modal-bg">
+      <div class="api-key-modal">
+        <button class="close-modal" id="close-apikey-modal" title="Fechar">&times;</button>
+        <h3>Chave API ElevenLabs</h3>
+        <label for="api-key">Chave API:</label>
+        <input type="password" id="api-key" placeholder="Cole sua chave API aqui" autocomplete="off">
+        <button class="show-hide-btn" id="toggle-api-key" title="Mostrar/ocultar chave" tabindex="0">
+          <span id="eye-icon">&#128065;</span>
+        </button>
+        <small>
+          Obtenha sua chave gratuita em <a href="https://elevenlabs.io/" target="_blank">elevenlabs.io</a>
+        </small>
+      </div>
+    </div>
 
     <!-- Texto para Imagem -->
     <section class="section-module" id="module-img">
@@ -490,29 +566,6 @@
     Desenvolvido com ❤️ por Lumen Studio – Powered by ElevenLabs.
   </footer>
   <script>
-    // Tema claro/escuro
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    function setTheme(mode) {
-      if (mode === 'light') {
-        document.body.classList.add('light-mode');
-        themeIcon.textContent = '🌞';
-      } else {
-        document.body.classList.remove('light-mode');
-        themeIcon.textContent = '🌙';
-      }
-    }
-    function getTheme() {
-      return localStorage.getItem('lumen_theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    }
-    function toggleTheme() {
-      const mode = document.body.classList.contains('light-mode') ? 'dark' : 'light';
-      setTheme(mode);
-      localStorage.setItem('lumen_theme', mode);
-    }
-    themeToggle.onclick = toggleTheme;
-    setTheme(getTheme());
-
     // Alternância de módulos
     const optionCards = {
       tts: document.getElementById('opt-tts'),
@@ -534,32 +587,33 @@
     optionCards.img.onclick = () => selectModule('img');
     optionCards.vid.onclick = () => selectModule('vid');
 
-    // ----- TTS Module Script -----
-    let currentVoice = "EXAVITQu4vr4xnSDxMaL";
-    let audioUrl = null;
-
-    const generateBtn = document.getElementById('generate-btn');
-    const textInput = document.getElementById('text-input');
-    const apiKeyInput = document.getElementById('api-key');
-    const audioPlayer = document.getElementById('audio-player');
-    const downloadBtn = document.getElementById('download-btn');
-    const resultCard = document.getElementById('result-card');
-    const loadingElement = document.getElementById('loading');
-    const errorMessage = document.getElementById('error-message');
-    const toggleApiKeyBtn = document.getElementById('toggle-api-key');
-    const eyeIcon = document.getElementById('eye-icon');
+    // Modal da chave API
+    const apikeyModalBg = document.getElementById('apikey-modal-bg');
+    const openApikeyBtn = document.getElementById('open-apikey-btn');
+    const closeApikeyModal = document.getElementById('close-apikey-modal');
+    openApikeyBtn.onclick = () => {
+      apikeyModalBg.classList.add('active');
+      setTimeout(() => { document.getElementById('api-key').focus(); }, 100);
+    };
+    closeApikeyModal.onclick = () => apikeyModalBg.classList.remove('active');
+    apikeyModalBg.onclick = (e) => {
+      if (e.target === apikeyModalBg) apikeyModalBg.classList.remove('active');
+    };
 
     // Carrega chave API do localStorage
     window.addEventListener('DOMContentLoaded', () => {
       const savedKey = localStorage.getItem('elevenlabs_api_key');
-      if (savedKey) apiKeyInput.value = savedKey;
+      if (savedKey) document.getElementById('api-key').value = savedKey;
     });
-    apiKeyInput.addEventListener('input', e => {
+    document.getElementById('api-key').addEventListener('input', e => {
       localStorage.setItem('elevenlabs_api_key', e.target.value.trim());
     });
 
     // Mostrar/ocultar chave API
+    const toggleApiKeyBtn = document.getElementById('toggle-api-key');
+    const eyeIcon = document.getElementById('eye-icon');
     toggleApiKeyBtn.addEventListener('click', () => {
+      const apiKeyInput = document.getElementById('api-key');
       if (apiKeyInput.type === "password") {
         apiKeyInput.type = "text";
         eyeIcon.textContent = "🙈";
@@ -572,6 +626,26 @@
       if (e.key === "Enter" || e.key === " ") toggleApiKeyBtn.click();
     });
 
+    // Custom controls
+    const speedInput = document.getElementById('speed');
+    const speedValue = document.getElementById('speed-value');
+    const reverbInput = document.getElementById('reverb');
+    speedInput.oninput = () => {
+      speedValue.textContent = Number(speedInput.value).toFixed(2) + "x";
+    };
+
+    // ----- TTS Module Script -----
+    let currentVoice = "EXAVITQu4vr4xnSDxMaL";
+    let audioUrl = null;
+
+    const generateBtn = document.getElementById('generate-btn');
+    const textInput = document.getElementById('text-input');
+    const audioPlayer = document.getElementById('audio-player');
+    const downloadBtn = document.getElementById('download-btn');
+    const resultCard = document.getElementById('result-card');
+    const loadingElement = document.getElementById('loading');
+    const errorMessage = document.getElementById('error-message');
+
     // Seleção de voz
     document.querySelectorAll('.voice-option').forEach(option => {
       option.addEventListener('click', () => {
@@ -582,10 +656,44 @@
       });
     });
 
-    // Gerar áudio
+    // Efeito de reverb (Web Audio API)
+    let currentAudioContext, convolverNode;
+    async function applyReverb(audioElement) {
+      // Desconecta anteriores
+      if (currentAudioContext) { currentAudioContext.close(); }
+
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      currentAudioContext = audioCtx;
+      const source = audioCtx.createMediaElementSource(audioElement);
+      const convolver = audioCtx.createConvolver();
+      convolverNode = convolver;
+
+      // Impulse response de exemplo (pode trocar por outro IR)
+      const irUrl = 'https://cdn.jsdelivr.net/gh/joeeyjunior/public-assets@main/impulse-small.wav';
+      const response = await fetch(irUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const irBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+      convolver.buffer = irBuffer;
+      source.connect(convolver);
+      convolver.connect(audioCtx.destination);
+    }
+
+    function removeReverb(audioElement) {
+      if (currentAudioContext) {
+        currentAudioContext.close();
+        currentAudioContext = null;
+        convolverNode = null;
+        // reconectar o audio element ao destination
+        try {
+          audioElement.srcObject = null;
+        } catch(e){}
+      }
+    }
+
     generateBtn.addEventListener('click', async () => {
       const text = textInput.value.trim();
-      const apiKey = apiKeyInput.value.trim();
+      const apiKey = document.getElementById('api-key').value.trim();
 
       if (!text) {
         showError('Por favor, digite algum texto!');
@@ -633,6 +741,16 @@
 
         audioUrl = URL.createObjectURL(audioBlob);
         audioPlayer.src = audioUrl;
+        audioPlayer.playbackRate = parseFloat(speedInput.value);
+
+        // Remove reverb antigo (se houver)
+        removeReverb(audioPlayer);
+
+        // Se reverb estiver ativado, aplica
+        if (reverbInput.checked) {
+          applyReverb(audioPlayer);
+        }
+
         downloadBtn.href = audioUrl;
         downloadBtn.download = `lumen_audio_${Date.now()}.mp3`;
         downloadBtn.classList.remove('hidden');
