@@ -402,6 +402,15 @@
     #download-with-effect:hover {
       background: #a24cf3;
     }
+    #play-with-effect {
+      background: #03a9f4;
+      color: #fff;
+      margin-top: 12px;
+      border: none;
+    }
+    #play-with-effect:hover {
+      background: #0288d1;
+    }
     .hidden { display: none; }
     .loader {
       display: inline-block;
@@ -433,6 +442,41 @@
       opacity: 0.94;
       text-align: center;
       padding: 28px 0 24px 0;
+    }
+    /* Barra de progresso */
+    #progress-bar-container {
+      width:100%;
+      margin-bottom:12px;
+      position:relative;
+      height:20px;
+      margin-top:8px;
+    }
+    #progress-bar-bg {
+      background:#333;
+      border-radius:14px;
+      width:100%;
+      height:20px;
+      overflow:hidden;
+      position:relative;
+    }
+    #progress-bar-fill {
+      background:linear-gradient(90deg,#43e97b 0%,#38f9d7 100%);
+      width:0%;
+      height:100%;
+      transition:width 0.3s;
+    }
+    #progress-bar-label {
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      text-align:center;
+      color:#fff;
+      font-size:0.95em;
+      font-weight:bold;
+      text-shadow:0 1px 2px #000;
+      line-height:20px;
+      pointer-events:none;
     }
     footer {
       text-align: center;
@@ -543,10 +587,18 @@
       <div id="error-message" class="hidden"></div>
       <div class="card hidden" id="result-card" style="background:none; box-shadow:none; border:none; margin:0;">
         <h3 style="text-align:center;">Resultado</h3>
+        <!-- Barra de progresso -->
+        <div id="progress-bar-container" class="hidden">
+          <div id="progress-bar-bg">
+            <div id="progress-bar-fill"></div>
+          </div>
+          <div id="progress-bar-label">0%</div>
+        </div>
         <div id="audio-container">
           <audio id="audio-player" controls></audio>
           <a id="download-btn" class="download-btn hidden">⬇️ Baixar Áudio</a>
           <a id="download-with-effect" class="download-btn hidden" style="background:#7B1FA2;">⬇️ Baixar com efeito</a>
+          <button id="play-with-effect" class="download-btn hidden" style="background:#03a9f4; color:#fff; margin-top:12px;">▶️ Reproduzir com efeito</button>
         </div>
       </div>
     </section>
@@ -676,6 +728,15 @@
     textInput.addEventListener('input', suggestSpeed);
     desiredDurationInput.addEventListener('input', suggestSpeed);
 
+    // ----- Barra de Progresso -----
+    const progressBarContainer = document.getElementById('progress-bar-container');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressBarLabel = document.getElementById('progress-bar-label');
+    function updateProgress(percent) {
+      progressBarFill.style.width = percent + '%';
+      progressBarLabel.textContent = percent + '%';
+    }
+
     // ----- TTS Module Script -----
     let currentVoice = "EXAVITQu4vr4xnSDxMaL";
     let audioUrl = null;
@@ -684,6 +745,7 @@
     const audioPlayer = document.getElementById('audio-player');
     const downloadBtn = document.getElementById('download-btn');
     const downloadWithEffectBtn = document.getElementById('download-with-effect');
+    const playWithEffectBtn = document.getElementById('play-with-effect');
     const resultCard = document.getElementById('result-card');
     const loadingElement = document.getElementById('loading');
     const errorMessage = document.getElementById('error-message');
@@ -732,6 +794,12 @@
       }
     }
 
+    // Função para mostrar botões de efeito ao finalizar
+    function showEffectButtons() {
+      downloadWithEffectBtn.classList.remove('hidden');
+      playWithEffectBtn.classList.remove('hidden');
+    }
+
     generateBtn.addEventListener('click', async () => {
       const text = textInput.value.trim();
       const apiKey = document.getElementById('api-key').value.trim();
@@ -749,6 +817,18 @@
       loadingElement.classList.remove('hidden');
       resultCard.classList.add('hidden');
       errorMessage.classList.add('hidden');
+      downloadBtn.classList.add('hidden');
+      downloadWithEffectBtn.classList.add('hidden');
+      playWithEffectBtn.classList.add('hidden');
+      progressBarContainer.classList.remove('hidden');
+      updateProgress(5);
+      let fakeProgress = 5;
+      let fakeProgressInterval = setInterval(() => {
+        if (fakeProgress < 95) {
+          fakeProgress += Math.random() * 8;
+          updateProgress(Math.min(95, Math.round(fakeProgress)));
+        }
+      }, 350);
 
       try {
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${currentVoice}`, {
@@ -811,12 +891,22 @@
         downloadBtn.href = audioUrl;
         downloadBtn.download = `lumen_audio_${Date.now()}.mp3`;
         downloadBtn.classList.remove('hidden');
-        downloadWithEffectBtn.classList.remove('hidden');
 
         resultCard.classList.remove('hidden');
         resultCard.scrollIntoView({ behavior: 'smooth' });
 
+        // Finaliza barra de progresso
+        clearInterval(fakeProgressInterval);
+        updateProgress(100);
+        setTimeout(() => { progressBarContainer.classList.add('hidden'); }, 1200);
+
+        // Mostra botões adicionais
+        showEffectButtons();
+
       } catch (error) {
+        clearInterval(fakeProgressInterval);
+        updateProgress(0);
+        progressBarContainer.classList.add('hidden');
         console.error('Erro na geração de áudio:', error);
         showError(`Erro: ${error.message}`);
       } finally {
@@ -825,6 +915,7 @@
       }
     });
 
+    // Baixar áudio com efeito (reverb)
     async function downloadAudioWithReverb(audioUrl, playbackRate = 1.0) {
       // Carregue o arquivo de áudio original
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -927,6 +1018,33 @@
       if (!audioPlayer.src) return;
       let playbackRate = parseFloat(speedInput.value);
       downloadAudioWithReverb(audioPlayer.src, playbackRate);
+    };
+
+    // Play áudio processado com efeito na página
+    playWithEffectBtn.onclick = async function() {
+      if (!audioPlayer.src) return;
+      let playbackRate = parseFloat(speedInput.value);
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const resp = await fetch(audioPlayer.src);
+      const arrayBuffer = await resp.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+      // Carregar impulse response (reverb)
+      const irResp = await fetch('https://cdn.jsdelivr.net/gh/joeeyjunior/public-assets@main/impulse-small.wav');
+      const irBuf = await irResp.arrayBuffer();
+      const irBuffer = await audioCtx.decodeAudioData(irBuf);
+
+      const source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.playbackRate.value = playbackRate;
+
+      const convolver = audioCtx.createConvolver();
+      convolver.buffer = irBuffer;
+
+      source.connect(convolver);
+      convolver.connect(audioCtx.destination);
+
+      source.start(0);
     };
 
     function showError(message) {
