@@ -143,6 +143,12 @@
     const audioResult = document.getElementById('audio-result');
     const audioPlayer = document.getElementById('audio-player');
 
+    async function loadImpulseResponse(audioContext) {
+      const response = await fetch('https://cdn.jsdelivr.net/gh/ai-voice-assets/reverbs/ir-room-small.wav');
+      const arrayBuffer = await response.arrayBuffer();
+      return await audioContext.decodeAudioData(arrayBuffer);
+    }
+
     generateBtn.addEventListener('click', async () => {
       const text = document.getElementById('text-input').value.trim();
       const voice = document.getElementById('voice-select').value;
@@ -170,6 +176,22 @@
         });
         if (!response.ok) throw new Error("Erro ao gerar áudio!");
         const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+
+        const convolver = audioContext.createConvolver();
+        convolver.buffer = await loadImpulseResponse(audioContext);
+
+        source.connect(convolver);
+        convolver.connect(audioContext.destination);
+
+        source.start();
+
         audioPlayer.src = URL.createObjectURL(blob);
         audioResult.style.display = "block";
         clearInterval(interval);
