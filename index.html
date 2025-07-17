@@ -219,8 +219,6 @@
       opacity: 0.84;
       color: var(--text-dark);
     }
-
-    /* Customization controls */
     .custom-controls {
       display: flex;
       flex-wrap: wrap;
@@ -262,7 +260,6 @@
       font-size: 0.95em;
       color: var(--accent);
     }
-
     button {
       background: white;
       color: var(--secondary);
@@ -287,7 +284,6 @@
       transform: none;
       box-shadow: none;
     }
-    /* --------- API KEY MODAL --------- */
     .api-key-trigger {
       display: inline-block;
       margin: 18px auto 0 auto;
@@ -399,6 +395,12 @@
     .download-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.19);
+    }
+    #download-with-effect {
+      background: #7B1FA2;
+    }
+    #download-with-effect:hover {
+      background: #a24cf3;
     }
     .hidden { display: none; }
     .loader {
@@ -544,6 +546,7 @@
         <div id="audio-container">
           <audio id="audio-player" controls></audio>
           <a id="download-btn" class="download-btn hidden">⬇️ Baixar Áudio</a>
+          <a id="download-with-effect" class="download-btn hidden" style="background:#7B1FA2;">⬇️ Baixar com efeito</a>
         </div>
       </div>
     </section>
@@ -680,6 +683,7 @@
     const generateBtn = document.getElementById('generate-btn');
     const audioPlayer = document.getElementById('audio-player');
     const downloadBtn = document.getElementById('download-btn');
+    const downloadWithEffectBtn = document.getElementById('download-with-effect');
     const resultCard = document.getElementById('result-card');
     const loadingElement = document.getElementById('loading');
     const errorMessage = document.getElementById('error-message');
@@ -807,6 +811,7 @@
         downloadBtn.href = audioUrl;
         downloadBtn.download = `lumen_audio_${Date.now()}.mp3`;
         downloadBtn.classList.remove('hidden');
+        downloadWithEffectBtn.classList.remove('hidden');
 
         resultCard.classList.remove('hidden');
         resultCard.scrollIntoView({ behavior: 'smooth' });
@@ -819,6 +824,110 @@
         loadingElement.classList.add('hidden');
       }
     });
+
+    async function downloadAudioWithReverb(audioUrl, playbackRate = 1.0) {
+      // Carregue o arquivo de áudio original
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const response = await fetch(audioUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+      // Carregue o impulse response (reverb)
+      const irResp = await fetch('https://cdn.jsdelivr.net/gh/joeeyjunior/public-assets@main/impulse-small.wav');
+      const irBuf = await irResp.arrayBuffer();
+      const irBuffer = await audioCtx.decodeAudioData(irBuf);
+
+      // Crie um OfflineAudioContext para renderizar o efeito
+      const offlineCtx = new OfflineAudioContext(
+        audioBuffer.numberOfChannels,
+        Math.ceil(audioBuffer.length / playbackRate),
+        audioBuffer.sampleRate
+      );
+      const source = offlineCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.playbackRate.value = playbackRate;
+
+      const convolver = offlineCtx.createConvolver();
+      convolver.buffer = irBuffer;
+
+      source.connect(convolver);
+      convolver.connect(offlineCtx.destination);
+
+      source.start(0);
+      const renderedBuffer = await offlineCtx.startRendering();
+
+      // Converta para WAV
+      const wavBlob = bufferToWavBlob(renderedBuffer);
+
+      // Crie o link de download
+      const url = URL.createObjectURL(wavBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lumen_audio_reverb_${Date.now()}.wav`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 1000);
+    }
+
+    // Função para converter AudioBuffer para WAV Blob
+    function bufferToWavBlob(buffer) {
+      // Função minimalista baseada em https://github.com/Jam3/audiobuffer-to-wav
+      function encodeWAV(buff) {
+        const numOfChan = buff.numberOfChannels;
+        const length = buff.length * numOfChan * 2 + 44;
+        const bufferWav = new ArrayBuffer(length);
+        const view = new DataView(bufferWav);
+        let offset = 0;
+
+        function writeString(s) {
+          for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
+          offset += s.length;
+        }
+        function floatTo16BitPCM(output, offset, input) {
+          for (let i = 0; i < input.length; i++, offset += 2) {
+            let s = Math.max(-1, Math.min(1, input[i]));
+            s = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            output.setInt16(offset, s, true);
+          }
+        }
+        writeString('RIFF');
+        view.setUint32(offset, length - 8, true); offset += 4;
+        writeString('WAVE');
+        writeString('fmt ');
+        view.setUint32(offset, 16, true); offset += 4;
+        view.setUint16(offset, 1, true); offset += 2;
+        view.setUint16(offset, numOfChan, true); offset += 2;
+        view.setUint32(offset, buffer.sampleRate, true); offset += 4;
+        view.setUint32(offset, buffer.sampleRate * numOfChan * 2, true); offset += 4;
+        view.setUint16(offset, numOfChan * 2, true); offset += 2;
+        view.setUint16(offset, 16, true); offset += 2;
+        writeString('data');
+        view.setUint32(offset, length - offset - 4, true); offset += 4;
+
+        // Interleave channels
+        let interleaved = new Float32Array(buff.length * numOfChan);
+        for (let chan = 0; chan < numOfChan; chan++) {
+          let channel = buff.getChannelData(chan);
+          for (let i = 0; i < channel.length; i++) {
+            interleaved[i * numOfChan + chan] = channel[i];
+          }
+        }
+        floatTo16BitPCM(view, offset, interleaved);
+        return bufferWav;
+      }
+
+      return new Blob([encodeWAV(buffer)], { type: 'audio/wav' });
+    }
+
+    downloadWithEffectBtn.onclick = function(e) {
+      e.preventDefault();
+      if (!audioPlayer.src) return;
+      let playbackRate = parseFloat(speedInput.value);
+      downloadAudioWithReverb(audioPlayer.src, playbackRate);
+    };
 
     function showError(message) {
       errorMessage.textContent = message;
