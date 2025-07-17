@@ -6,204 +6,655 @@
   <title>Lumen Studio – IA Criativa</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* Estilos otimizados */
     :root {
       --primary: #6a11cb;
       --secondary: #2575fc;
       --accent: #ff6b6b;
-      --background: #121420;
-      --card-bg: rgba(30, 33, 48, 0.9);
-      --text: #f0f2f6;
-      --text-muted: #a0a8c0;
-      --input-bg: rgba(20, 23, 38, 0.6);
-      --hover-bg: rgba(60, 65, 90, 0.8);
-      --border: rgba(80, 85, 115, 0.3);
+      --glass-bg: rgba(255,255,255,0.10);
+
+      --background: linear-gradient(120deg, var(--primary), var(--secondary));
+      --text: #fff;
+      --card-bg: var(--glass-bg);
+      --input-bg: rgba(255,255,255,0.92);
+      --input-text: #333;
+      --option-bg: rgba(255,255,255,0.2);
+      --option-selected: rgba(255,255,255,0.45);
+      --border: rgba(255,255,255,0.22);
+      --shadow: 0 5px 25px 0 rgba(31,38,135,0.14);
+      --card-shadow: 0 5px 26px 0 rgba(31,38,135,0.10);
+      --footer-opacity: 0.7;
+      --nav-a: #fff;
+      --nav-a-hover: var(--accent);
+      --link: #fff;
     }
+    .light-mode {
+      --background: linear-gradient(120deg, #f8fafc 40%, #e2e6ef 100%);
+      --text: #191c22;
+      --card-bg: rgba(250,250,253,0.86);
+      --input-bg: #fff;
+      --input-text: #222;
+      --option-bg: rgba(220,222,235,0.18);
+      --option-selected: rgba(180,180,220,0.38);
+      --border: rgba(160,160,180,0.17);
+      --shadow: 0 2px 16px 0 rgba(120,140,180,0.10);
+      --card-shadow: 0 2px 16px 0 rgba(120,140,180,0.08);
+      --footer-opacity: 0.92;
+      --nav-a: #222;
+      --nav-a-hover: var(--primary);
+      --link: var(--primary);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', 'Montserrat', Arial, sans-serif;
       background: var(--background);
       color: var(--text);
-      margin: 0;
-      padding: 0;
+      min-height: 100vh;
       line-height: 1.6;
+      transition: background 0.4s, color 0.32s;
     }
     header {
+      width: 100%;
+      padding: 38px 0 18px 0;
       text-align: center;
-      padding: 30px 20px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      color: #fff;
+      position: relative;
     }
     .logo {
+      font-family: 'Montserrat', sans-serif;
       font-size: 2.4rem;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 1px;
+      background: linear-gradient(90deg,#ff8a00,#da1b60 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      margin-bottom: 8px;
     }
-    main {
-      padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .card {
+
+    .theme-toggle {
+      position: absolute;
+      top: 22px;
+      right: 22px;
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.32rem;
+      color: var(--text);
+      box-shadow: 0 2px 12px 0 rgba(30,30,50,0.08);
+      transition: background .22s, color .22s, border .22s;
+      z-index: 20;
     }
-    label {
+    .theme-toggle:hover {
+      background: var(--option-selected);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+    nav a {
+      color: var(--nav-a);
+      text-decoration: none;
+      margin: 0 13px;
       font-weight: 600;
-      margin-bottom: 8px;
+      opacity: 0.86;
+      transition: color .2s;
+    }
+    nav a:hover {
+      color: var(--nav-a-hover);
+    }
+    .main-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 55vh;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    .main-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg,#ff8a00,#da1b60 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.10);
+    }
+    .main-desc {
+      font-size: 1.13rem;
+      margin-bottom: 26px;
+      color: var(--text);
+      opacity: 0.94;
+      max-width: 520px;
+    }
+
+    .options-panel {
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .option-card {
+      background: var(--option-bg);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      border: 1.2px solid var(--border);
+      min-width: 230px;
+      max-width: 280px;
+      padding: 34px 20px 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .22s, border .18s;
+      position: relative;
+    }
+    .option-card.selected,
+    .option-card:hover {
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: 0 14px 36px 0 rgba(31,38,135,0.22);
+      border-color: var(--accent);
+      background: var(--option-selected);
+    }
+    .option-icon {
+      font-size: 2.8rem;
+      margin-bottom: 18px;
       display: block;
     }
-    textarea, input, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
+    .option-title {
+      font-size: 1.2rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .option-desc {
+      font-size: 0.99rem;
       color: var(--text);
+      opacity: 0.80;
+      min-height: 36px;
+    }
+    .section-module {
+      max-width: 650px;
+      margin: 34px auto 0 auto;
+      background: var(--card-bg);
+      border-radius: 22px;
+      box-shadow: var(--card-shadow);
+      border: 1.2px solid var(--border);
+      padding: 32px 20px 30px 20px;
+      display: none;
+      animation: fadeIn .6s;
+    }
+    .section-module.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    /* --------- TTS Module Styles --------- */
+    .input-group { margin-bottom: 25px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 1.08rem;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
       font-size: 1rem;
+      background: var(--input-bg);
+      resize: vertical;
+      color: var(--input-text);
+    }
+    .voice-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin-top: 13px;
+    }
+    .voice-option {
+      flex: 1;
+      min-width: 100px;
+      background: var(--option-bg);
+      padding: 13px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      text-align: left;
+    }
+    .voice-option:hover {
+      background: var(--option-selected);
+    }
+    .voice-option.selected {
+      background: var(--option-selected);
+      border-color: var(--accent);
+    }
+    .voice-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .voice-desc {
+      font-size: 0.88rem;
+      opacity: 0.84;
+      color: var(--text);
     }
     button {
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      color: #fff;
+      background: white;
+      color: var(--secondary);
       border: none;
-      padding: 12px;
-      font-size: 1rem;
+      padding: 13px 28px;
+      font-size: 1.1rem;
       font-weight: 600;
-      border-radius: 8px;
+      border-radius: 50px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.11);
+      margin-top: 3px;
     }
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.18);
     }
-    .progress-bar {
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .api-key-container {
+      margin-top: 10px;
+      background: rgba(0,0,0,0.10);
+      padding: 13px;
+      border-radius: 9px;
+    }
+    #api-key-group { position: relative; }
+    #api-key {
       width: 100%;
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 10px;
+      padding: 9px 38px 9px 12px;
+      border-radius: 7px;
+      border: none;
+      margin-top: 7px;
+      background: var(--input-bg);
+      color: var(--input-text);
+      font-size: 1rem;
+      letter-spacing: 0.08em;
     }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      width: 0;
-      transition: width 0.3s;
+    .show-hide-btn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-10px);
+      background: none;
+      border: none;
+      color: var(--input-text);
+      font-size: 1.2em;
+      cursor: pointer;
+      z-index: 2;
+      padding: 2px 7px;
     }
-    .error {
-      color: var(--accent);
-      background: rgba(255, 107, 107, 0.1);
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 10px;
+    .show-hide-btn:focus { outline: 2px solid var(--secondary); }
+    #audio-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    #audio-player {
+      width: 100%;
+      margin-top: 17px;
+      border-radius: 9px;
+    }
+    .download-btn {
+      display: inline-block;
+      background: #4CAF50;
+      color: white;
+      padding: 11px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 18px;
+      transition: all 0.3s ease;
+    }
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.19);
+    }
+    .hidden { display: none; }
+    .loader {
+      display: inline-block;
+      width: 34px;
+      height: 34px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading {
+      text-align: center;
+      margin: 18px 0;
       display: none;
     }
-    @media (max-width: 768px) {
-      main { padding: 10px; }
+    #error-message {
+      color: #ff6b6b;
+      background: rgba(0, 0, 0, 0.15);
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 11px;
+      display: none;
+    }
+    .coming-soon {
+      font-size: 1.15rem;
+      color: var(--text);
+      opacity: 0.94;
+      text-align: center;
+      padding: 28px 0 24px 0;
+    }
+    a { color: var(--link); }
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      opacity: var(--footer-opacity);
+      font-size: 0.98rem;
+      padding-bottom: 28px;
+    }
+    @media (max-width: 900px) {
+      .options-panel { flex-direction: column; align-items: center; }
+    }
+    @media (max-width: 600px) {
+      .main-title { font-size: 1.37rem;}
+      .section-module { padding: 14px 3px; }
+      .logo { font-size: 1.5rem;}
+      .theme-toggle { top: 12px; right: 10px; }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="logo">Lumen Studio</div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
+      <span id="theme-icon">🌙</span>
+    </button>
+    <nav>
+      <a href="#tts">Texto para Áudio</a>
+      <a href="#img">Texto para Imagem</a>
+      <a href="#vid">Texto para Vídeo</a>
+    </nav>
   </header>
+
   <main>
-    <section class="card">
-      <label for="text-input">Digite seu texto</label>
-      <textarea id="text-input" placeholder="Escreva aqui o texto que deseja converter em voz..."></textarea>
-      <label for="voice-select">Selecione a voz</label>
-      <select id="voice-select">
-        <option value="EXAVITQu4vr4xnSDxMaL">Bianca (BR)</option>
-        <option value="VR6AewLTigWG4xSOukaG">Antônio (BR)</option>
-        <option value="MF3mGyEYCl7XYWbV9V6O">Lúcia (PT)</option>
-        <option value="Wa8JcdAKK7NzSC0jv3Bs">Minha Voz</option>
-      </select>
-      <label for="api-key">Chave API ElevenLabs</label>
-      <input type="password" id="api-key" placeholder="Cole sua chave API aqui">
-      <button id="generate-btn">Gerar Áudio</button>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
+    <section class="main-hero">
+      <div class="main-title">Sua Central Criativa com IA</div>
+      <div class="main-desc">Transforme texto em áudio, imagem e vídeo de forma simples, rápida e profissional. Escolha o que quer criar:</div>
+      <div class="options-panel">
+        <div class="option-card selected" id="opt-tts">
+          <span class="option-icon">🔊</span>
+          <div class="option-title">Texto para Áudio</div>
+          <div class="option-desc">Converta textos em vozes realistas e premium.</div>
+        </div>
+        <div class="option-card" id="opt-img">
+          <span class="option-icon">🖼️</span>
+          <div class="option-title">Texto para Imagem</div>
+          <div class="option-desc">Gere imagens únicas a partir de descrições.</div>
+        </div>
+        <div class="option-card" id="opt-vid">
+          <span class="option-icon">🎬</span>
+          <div class="option-title">Texto para Vídeo</div>
+          <div class="option-desc">Transforme roteiros em vídeos automaticamente.</div>
+        </div>
       </div>
-      <div class="error" id="error-message"></div>
     </section>
-    <section class="card" id="audio-result" style="display: none;">
-      <audio id="audio-player" controls></audio>
-      <button id="play-with-effects">▶️ Reproduzir com Efeitos</button>
-      <button id="download-btn">⬇️ Baixar Áudio</button>
+
+    <!-- Texto para Áudio -->
+    <section class="section-module active" id="module-tts">
+      <h2 style="text-align:center; font-size:1.25rem; margin-bottom:22px;">Texto para Áudio (TTS)</h2>
+      <div class="input-group">
+        <label for="text-input">Digite seu texto:</label>
+        <textarea id="text-input" placeholder="Escreva aqui o texto que deseja converter em voz...">Olá! Esta é uma demonstração do sistema de texto para voz com vozes premium.</textarea>
+      </div>
+      <div class="input-group">
+        <label>Selecione a voz:</label>
+        <div class="voice-options">
+          <div class="voice-option selected" data-voice="EXAVITQu4vr4xnSDxMaL">
+            <div class="voice-name">Bianca (BR)</div>
+            <div class="voice-desc">Voz feminina natural</div>
+          </div>
+          <div class="voice-option" data-voice="VR6AewLTigWG4xSOukaG">
+            <div class="voice-name">Antônio (BR)</div>
+            <div class="voice-desc">Voz masculina clara</div>
+          </div>
+          <div class="voice-option" data-voice="MF3mGyEYCl7XYWbV9V6O">
+            <div class="voice-name">Lúcia (PT)</div>
+            <div class="voice-desc">Sotaque português</div>
+          </div>
+          <div class="voice-option" data-voice="Wa8JcdAKK7NzSC0jv3Bs">
+            <div class="voice-name">Minha Voz</div>
+            <div class="voice-desc">Voz personalizada ElevenLabs</div>
+          </div>
+        </div>
+      </div>
+      <div class="api-key-container">
+        <label for="api-key">Chave API ElevenLabs:</label>
+        <div id="api-key-group" style="position:relative;">
+          <input type="password" id="api-key" placeholder="Cole sua chave API aqui" autocomplete="off">
+          <button class="show-hide-btn" id="toggle-api-key" title="Mostrar/ocultar chave" tabindex="0">
+            <span id="eye-icon">&#128065;</span>
+          </button>
+        </div>
+        <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.8;">
+          Obtenha sua chave gratuita em <a href="https://elevenlabs.io/" target="_blank" style="color: var(--link); text-decoration: underline;">elevenlabs.io</a>
+        </p>
+      </div>
+      <button id="generate-btn">Gerar Áudio</button>
+      <div id="loading" class="hidden">
+        <div class="loader"></div>
+        <p>Processando seu áudio...</p>
+      </div>
+      <div id="error-message" class="hidden"></div>
+      <div class="card hidden" id="result-card" style="background:none; box-shadow:none; border:none; margin:0;">
+        <h3 style="text-align:center;">Resultado</h3>
+        <div id="audio-container">
+          <audio id="audio-player" controls></audio>
+          <a id="download-btn" class="download-btn hidden">⬇️ Baixar Áudio</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Texto para Imagem -->
+    <section class="section-module" id="module-img">
+      <h2 style="text-align:center; font-size:1.18rem;">Texto para Imagem</h2>
+      <div class="coming-soon">Em breve: gere imagens incríveis a partir de qualquer descrição!</div>
+    </section>
+
+    <!-- Texto para Vídeo -->
+    <section class="section-module" id="module-vid">
+      <h2 style="text-align:center; font-size:1.18rem;">Texto para Vídeo</h2>
+      <div class="coming-soon">Em breve: transforme roteiros em vídeos automaticamente!</div>
     </section>
   </main>
+
+  <footer>
+    Desenvolvido com ❤️ por Lumen Studio – Powered by ElevenLabs.
+  </footer>
   <script>
-    const generateBtn = document.getElementById('generate-btn');
-    const progressFill = document.getElementById('progress-fill');
-    const errorMessage = document.getElementById('error-message');
-    const audioResult = document.getElementById('audio-result');
-    const audioPlayer = document.getElementById('audio-player');
-
-    async function loadImpulseResponse(audioContext) {
-      const response = await fetch('https://cdn.jsdelivr.net/gh/ai-voice-assets/reverbs/ir-room-small.wav');
-      const arrayBuffer = await response.arrayBuffer();
-      return await audioContext.decodeAudioData(arrayBuffer);
-    }
-
-    generateBtn.addEventListener('click', async () => {
-      const text = document.getElementById('text-input').value.trim();
-      const voice = document.getElementById('voice-select').value;
-      const apiKey = document.getElementById('api-key').value.trim();
-      if (!text || !apiKey) {
-        errorMessage.textContent = "Por favor, preencha todos os campos!";
-        errorMessage.style.display = "block";
-        return;
+    // Tema claro/escuro
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    function setTheme(mode) {
+      if (mode === 'light') {
+        document.body.classList.add('light-mode');
+        themeIcon.textContent = '🌞';
+      } else {
+        document.body.classList.remove('light-mode');
+        themeIcon.textContent = '🌙';
       }
-      generateBtn.disabled = true;
-      progressFill.style.width = "0%";
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        if (progress <= 95) progressFill.style.width = `${progress}%`;
-      }, 300);
-      try {
-        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "xi-api-key": apiKey
-          },
-          body: JSON.stringify({ text })
-        });
-        if (!response.ok) throw new Error("Erro ao gerar áudio!");
-        const blob = await response.blob();
-        const arrayBuffer = await blob.arrayBuffer();
+    }
+    function getTheme() {
+      return localStorage.getItem('lumen_theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    }
+    function toggleTheme() {
+      const mode = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+      setTheme(mode);
+      localStorage.setItem('lumen_theme', mode);
+    }
+    themeToggle.onclick = toggleTheme;
+    setTheme(getTheme());
 
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    // Alternância de módulos
+    const optionCards = {
+      tts: document.getElementById('opt-tts'),
+      img: document.getElementById('opt-img'),
+      vid: document.getElementById('opt-vid')
+    };
+    const modules = {
+      tts: document.getElementById('module-tts'),
+      img: document.getElementById('module-img'),
+      vid: document.getElementById('module-vid')
+    };
+    function selectModule(key) {
+      Object.keys(optionCards).forEach(k => {
+        optionCards[k].classList.toggle('selected', k === key);
+        modules[k].classList.toggle('active', k === key);
+      });
+    }
+    optionCards.tts.onclick = () => selectModule('tts');
+    optionCards.img.onclick = () => selectModule('img');
+    optionCards.vid.onclick = () => selectModule('vid');
 
-        const source = audioContext.createBufferSource();
-        source.buffer = audioBuffer;
+    // ----- TTS Module Script -----
+    let currentVoice = "EXAVITQu4vr4xnSDxMaL";
+    let audioUrl = null;
 
-        const convolver = audioContext.createConvolver();
-        convolver.buffer = await loadImpulseResponse(audioContext);
+    const generateBtn = document.getElementById('generate-btn');
+    const textInput = document.getElementById('text-input');
+    const apiKeyInput = document.getElementById('api-key');
+    const audioPlayer = document.getElementById('audio-player');
+    const downloadBtn = document.getElementById('download-btn');
+    const resultCard = document.getElementById('result-card');
+    const loadingElement = document.getElementById('loading');
+    const errorMessage = document.getElementById('error-message');
+    const toggleApiKeyBtn = document.getElementById('toggle-api-key');
+    const eyeIcon = document.getElementById('eye-icon');
 
-        source.connect(convolver);
-        convolver.connect(audioContext.destination);
+    // Carrega chave API do localStorage
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedKey = localStorage.getItem('elevenlabs_api_key');
+      if (savedKey) apiKeyInput.value = savedKey;
+    });
+    apiKeyInput.addEventListener('input', e => {
+      localStorage.setItem('elevenlabs_api_key', e.target.value.trim());
+    });
 
-        source.start();
-
-        audioPlayer.src = URL.createObjectURL(blob);
-        audioResult.style.display = "block";
-        clearInterval(interval);
-        progressFill.style.width = "100%";
-      } catch (error) {
-        errorMessage.textContent = error.message;
-        errorMessage.style.display = "block";
-        clearInterval(interval);
-      } finally {
-        generateBtn.disabled = false;
+    // Mostrar/ocultar chave API
+    toggleApiKeyBtn.addEventListener('click', () => {
+      if (apiKeyInput.type === "password") {
+        apiKeyInput.type = "text";
+        eyeIcon.textContent = "🙈";
+      } else {
+        apiKeyInput.type = "password";
+        eyeIcon.textContent = "👁️";
       }
     });
+    toggleApiKeyBtn.addEventListener('keydown', e => {
+      if (e.key === "Enter" || e.key === " ") toggleApiKeyBtn.click();
+    });
+
+    // Seleção de voz
+    document.querySelectorAll('.voice-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.voice-option').forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        currentVoice = option.dataset.voice;
+        errorMessage.classList.add('hidden');
+      });
+    });
+
+    // Gerar áudio
+    generateBtn.addEventListener('click', async () => {
+      const text = textInput.value.trim();
+      const apiKey = apiKeyInput.value.trim();
+
+      if (!text) {
+        showError('Por favor, digite algum texto!');
+        return;
+      }
+      if (!apiKey) {
+        showError('Por favor, insira sua chave API do ElevenLabs!');
+        return;
+      }
+
+      generateBtn.disabled = true;
+      loadingElement.classList.remove('hidden');
+      resultCard.classList.add('hidden');
+      errorMessage.classList.add('hidden');
+
+      try {
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${currentVoice}`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'audio/mpeg',
+            'Content-Type': 'application/json',
+            'xi-api-key': apiKey
+          },
+          body: JSON.stringify({
+            text: text,
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.8
+            }
+          })
+        });
+
+        if (!response.ok) {
+          let errorMsg = `Erro na API: ${response.status} ${response.statusText}`;
+          try {
+            const errorData = await response.json();
+            errorMsg = errorData.detail?.message || errorMsg;
+          } catch {}
+          throw new Error(errorMsg);
+        }
+
+        const audioBlob = await response.blob();
+
+        if (audioUrl) URL.revokeObjectURL(audioUrl);
+
+        audioUrl = URL.createObjectURL(audioBlob);
+        audioPlayer.src = audioUrl;
+        downloadBtn.href = audioUrl;
+        downloadBtn.download = `lumen_audio_${Date.now()}.mp3`;
+        downloadBtn.classList.remove('hidden');
+
+        resultCard.classList.remove('hidden');
+        resultCard.scrollIntoView({ behavior: 'smooth' });
+
+      } catch (error) {
+        console.error('Erro na geração de áudio:', error);
+        showError(`Erro: ${error.message}`);
+      } finally {
+        generateBtn.disabled = false;
+        loadingElement.classList.add('hidden');
+      }
+    });
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.color = "#ff6b6b";
+      errorMessage.classList.remove('hidden');
+      resultCard.classList.add('hidden');
+    }
   </script>
 </body>
 </html>
