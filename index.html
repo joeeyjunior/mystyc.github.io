@@ -917,7 +917,6 @@
 
     // Baixar áudio com efeito (reverb)
     async function downloadAudioWithReverb(audioUrl, playbackRate = 1.0) {
-      // Carregue o arquivo de áudio original
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const response = await fetch(audioUrl);
       const arrayBuffer = await response.arrayBuffer();
@@ -965,7 +964,6 @@
 
     // Função para converter AudioBuffer para WAV Blob
     function bufferToWavBlob(buffer) {
-      // Função minimalista baseada em https://github.com/Jam3/audiobuffer-to-wav
       function encodeWAV(buff) {
         const numOfChan = buff.numberOfChannels;
         const length = buff.length * numOfChan * 2 + 44;
@@ -1020,31 +1018,62 @@
       downloadAudioWithReverb(audioPlayer.src, playbackRate);
     };
 
-    // Play áudio processado com efeito na página
+    // Play áudio processado com efeito na página (robusto)
+    let playEffectAudioContext = null;
+    let playEffectSource = null;
     playWithEffectBtn.onclick = async function() {
-      if (!audioPlayer.src) return;
-      let playbackRate = parseFloat(speedInput.value);
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const resp = await fetch(audioPlayer.src);
-      const arrayBuffer = await resp.arrayBuffer();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      if (!audioPlayer.src) {
+        alert("Gere o áudio primeiro.");
+        return;
+      }
+      try {
+        // Fecha contextos antigos
+        if (playEffectAudioContext) {
+          playEffectAudioContext.close();
+          playEffectAudioContext = null;
+          playEffectSource = null;
+        }
 
-      // Carregar impulse response (reverb)
-      const irResp = await fetch('https://cdn.jsdelivr.net/gh/joeeyjunior/public-assets@main/impulse-small.wav');
-      const irBuf = await irResp.arrayBuffer();
-      const irBuffer = await audioCtx.decodeAudioData(irBuf);
+        let playbackRate = parseFloat(speedInput.value);
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        playEffectAudioContext = audioCtx;
 
-      const source = audioCtx.createBufferSource();
-      source.buffer = audioBuffer;
-      source.playbackRate.value = playbackRate;
+        // Carregar áudio original
+        const resp = await fetch(audioPlayer.src);
+        if (!resp.ok) throw new Error("Erro ao carregar áudio para efeito.");
+        const arrayBuffer = await resp.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
-      const convolver = audioCtx.createConvolver();
-      convolver.buffer = irBuffer;
+        // Carregar impulse response (reverb)
+        const irResp = await fetch('https://cdn.jsdelivr.net/gh/joeeyjunior/public-assets@main/impulse-small.wav');
+        if (!irResp.ok) throw new Error("Erro ao carregar impulse response.");
+        const irBuf = await irResp.arrayBuffer();
+        const irBuffer = await audioCtx.decodeAudioData(irBuf);
 
-      source.connect(convolver);
-      convolver.connect(audioCtx.destination);
+        // Cria nodes
+        const source = audioCtx.createBufferSource();
+        playEffectSource = source;
+        source.buffer = audioBuffer;
+        source.playbackRate.value = playbackRate;
 
-      source.start(0);
+        const convolver = audioCtx.createConvolver();
+        convolver.buffer = irBuffer;
+
+        source.connect(convolver);
+        convolver.connect(audioCtx.destination);
+
+        source.start(0);
+
+        // Para o áudio se clicar novamente no botão
+        source.onended = () => {
+          audioCtx.close();
+          playEffectAudioContext = null;
+          playEffectSource = null;
+        };
+
+      } catch (e) {
+        alert("Falha ao reproduzir áudio com efeito: " + e.message);
+      }
     };
 
     function showError(message) {
