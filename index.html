@@ -252,6 +252,16 @@
       margin-left: 7px;
       margin-right: 7px;
     }
+    .custom-control input[type="number"] {
+      width: 70px;
+      margin-left: 7px;
+    }
+    .custom-control .speed-suggestion {
+      margin-left: 12px;
+      opacity: 0.8;
+      font-size: 0.95em;
+      color: var(--accent);
+    }
 
     button {
       background: white;
@@ -512,9 +522,14 @@
           <label for="reverb">Reverb</label>
         </div>
         <div class="custom-control">
+          <label for="desired-duration">Duração desejada (segundos):</label>
+          <input type="number" min="5" max="300" step="1" id="desired-duration" placeholder="ex: 50">
+        </div>
+        <div class="custom-control">
           <label for="speed">Velocidade:</label>
-          <input type="range" min="0.7" max="1.5" step="0.05" value="1" id="speed" />
+          <input type="range" min="0.7" max="2.0" step="0.01" value="1" id="speed" />
           <span id="speed-value">1.00x</span>
+          <span class="speed-suggestion" id="speed-suggestion"></span>
         </div>
       </div>
       <button id="generate-btn">Gerar Áudio</button>
@@ -630,16 +645,39 @@
     const speedInput = document.getElementById('speed');
     const speedValue = document.getElementById('speed-value');
     const reverbInput = document.getElementById('reverb');
-    speedInput.oninput = () => {
+    const desiredDurationInput = document.getElementById('desired-duration');
+    const textInput = document.getElementById('text-input');
+    const speedSuggestion = document.getElementById('speed-suggestion');
+
+    function updateSpeedValue() {
       speedValue.textContent = Number(speedInput.value).toFixed(2) + "x";
-    };
+    }
+    speedInput.oninput = updateSpeedValue;
+
+    // Sugestão automática de velocidade conforme texto e duração desejada
+    function suggestSpeed() {
+      const text = textInput.value.trim();
+      const desired = parseFloat(desiredDurationInput.value);
+      // Média: 13 caracteres/segundo (aprox. 780 caracteres/minuto)
+      const avgCharsPerSec = 13;
+      if (!text || !desired || desired < 1) {
+        speedSuggestion.textContent = '';
+        return;
+      }
+      const estimatedDuration = text.length / avgCharsPerSec;
+      let suggestedSpeed = estimatedDuration / desired;
+      if (suggestedSpeed < 0.7) suggestedSpeed = 0.7;
+      if (suggestedSpeed > 2.0) suggestedSpeed = 2.0;
+      speedSuggestion.textContent = `(Sugestão: ${suggestedSpeed.toFixed(2)}x)`;
+    }
+    textInput.addEventListener('input', suggestSpeed);
+    desiredDurationInput.addEventListener('input', suggestSpeed);
 
     // ----- TTS Module Script -----
     let currentVoice = "EXAVITQu4vr4xnSDxMaL";
     let audioUrl = null;
 
     const generateBtn = document.getElementById('generate-btn');
-    const textInput = document.getElementById('text-input');
     const audioPlayer = document.getElementById('audio-player');
     const downloadBtn = document.getElementById('download-btn');
     const resultCard = document.getElementById('result-card');
@@ -684,7 +722,6 @@
         currentAudioContext.close();
         currentAudioContext = null;
         convolverNode = null;
-        // reconectar o audio element ao destination
         try {
           audioElement.srcObject = null;
         } catch(e){}
@@ -741,7 +778,23 @@
 
         audioUrl = URL.createObjectURL(audioBlob);
         audioPlayer.src = audioUrl;
-        audioPlayer.playbackRate = parseFloat(speedInput.value);
+
+        // Ao carregar metadados (duração etc)
+        audioPlayer.onloadedmetadata = function() {
+          let playbackRate = parseFloat(speedInput.value);
+          const desiredDuration = parseFloat(desiredDurationInput.value);
+
+          if (desiredDuration && desiredDuration > 1) {
+            const originalDuration = audioPlayer.duration;
+            let calculatedRate = originalDuration / desiredDuration;
+            if (calculatedRate < 0.7) calculatedRate = 0.7;
+            if (calculatedRate > 2.0) calculatedRate = 2.0;
+            playbackRate = calculatedRate;
+            speedInput.value = playbackRate.toFixed(2);
+            speedValue.textContent = playbackRate.toFixed(2) + "x";
+          }
+          audioPlayer.playbackRate = playbackRate;
+        };
 
         // Remove reverb antigo (se houver)
         removeReverb(audioPlayer);
